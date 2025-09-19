@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LED Control</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; }
+    button { width: 120px; height: 50px; margin: 10px; font-size: 16px; }
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LED Control</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; }
+    button { width: 120px; height: 50px; margin: 10px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Control 8 LEDs</h1>
+  <div>
+    <button onclick="toggleLED(1)">LED 1</button>
+    <button onclick="toggleLED(2)">LED 2</button>
+    <button onclick="toggleLED(3)">LED 3</button>
+    <button onclick="toggleLED(4)">LED 4</button>
+    <button onclick="toggleLED(5)">LED 5</button>
+    <button onclick="toggleLED(6)">LED 6</button>
+    <button onclick="toggleLED(7)">LED 7</button>
+    <button onclick="toggleLED(8)">LED 8</button>
+  </div>
+
+  <script>
+    const username = "fateme";
+    const aioKey = "aio_qBvq62V2PZd6roxuEP3empDHE6zR";
+    let ledState = [0,0,0,0,0,0,0,0];
+
+    function toggleLED(n) {
+      ledState[n-1] = ledState[n-1] ? 0 : 1;
+      fetch(`https://io.adafruit.com/api/v2/${username}/feeds/led${n}/data`, {
+        method: 'POST',
+        headers: {
+          'X-AIO-Key': aioKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({value: ledState[n-1]})
+      })
+      .then(res => console.log(`LED${n} set to ${ledState[n-1]}`))
+      .catch(err => console.error(err));
+    }
+  </script>
+</body>
+</html>

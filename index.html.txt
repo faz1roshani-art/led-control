@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Remote LED Control</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; }
+    button { padding: 15px 30px; margin: 10px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>کنترل LED از راه دور</h1>
+  <div id="led-buttons"></div>
+
+  <script>
+    const aioUsername = "fateme";  // Adafruit IO username
+    const aioKey = "aio_qBvq62V2PZd6roxuEP3empDHE6zR"; // Adafruit IO key
+    const leds = ["led1","led2","led3","led4","led5","led6","led7","led8"];
+
+    const ledContainer = document.getElementById("led-buttons");
+
+    leds.forEach((ledName, index) => {
+      const btnOn = document.createElement("button");
+      btnOn.innerText = ledName + " ON";
+      btnOn.onclick = () => sendData(ledName, "ON");
+
+      const btnOff = document.createElement("button");
+      btnOff.innerText = ledName + " OFF";
+      btnOff.onclick = () => sendData(ledName, "OFF");
+
+      ledContainer.appendChild(btnOn);
+      ledContainer.appendChild(btnOff);
+      ledContainer.appendChild(document.createElement("br"));
+    });
+
+    function sendData(feed, value) {
+      fetch(`https://io.adafruit.com/api/v2/${aioUsername}/feeds/${feed}/data`, {
+        method: "POST",
+        headers: {
+          "X-AIO-Key": aioKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({value: value})
+      })
+      .then(response => {
+        if(response.ok) {
+          console.log(feed + " set to " + value);
+        } else {
+          console.error("Error sending data to " + feed);
+        }
+      })
+      .catch(err => console.error(err));
+    }
+  </script>
+</body>
+</html>
+
